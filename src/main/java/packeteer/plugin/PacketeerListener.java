@@ -50,7 +50,7 @@ public class PacketeerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        Packeteer.getPlayer(event.getPlayer()).unhook();
+//        Packeteer.getPlayer(event.getPlayer()).unhook();
     }
     
     @EventHandler
