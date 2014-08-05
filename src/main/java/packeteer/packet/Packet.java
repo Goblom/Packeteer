@@ -19,6 +19,7 @@ package packeteer.packet;
 
 import java.lang.reflect.Field;
 import lombok.Getter;
+import packeteer.packet.helper.FieldModifier;
 import packeteer.utils.Reflection;
 
 /**
@@ -74,5 +75,36 @@ public class Packet {
     
     public <T> T read(String field, Class<T> type) {
         return (T) read(field);
+    }
+    
+    public void write(int index, Object value) {
+        try {
+            Field f = handle.getClass().getFields()[index];
+            f.set(handle, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public Object read(int index) {
+        try {
+            return handle.getClass().getFields()[index].get(handle);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public <T> T read(int index, Class<T> type) {
+        return (T) read(index);
+    }
+    
+    public FieldModifier<Object> modify(String field) {
+        return new FieldModifier<Object>(this, field, Object.class);
+    }
+    
+    public <T> FieldModifier<T> modify(String field, Class<T> type) {
+        return new FieldModifier<T>(this, field, type);
     }
 }
