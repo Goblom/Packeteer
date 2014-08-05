@@ -41,14 +41,12 @@ public class PacketeerPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         setInstance(this);
-        startTouching(); //LOLOLOL
     }
     
     @Override
     public void onEnable() {
+        Packeteer.register(this);
 //        Packeteer.registerListener(new BasicPacketListener(this));
-        
-        getServer().getPluginManager().registerEvents(new PacketeerListener(this), this);
     }
     
     @Override
@@ -60,11 +58,4 @@ public class PacketeerPlugin extends JavaPlugin {
     public ClassLoader getPluginClassLoader() {
         return getClassLoader();
     }
-    
-    private void startTouching() {
-        Utils.touch(Reflection.class);
-        Utils.touch(Packeteer.class);
-    }
-    
-     //do nothing
 }
