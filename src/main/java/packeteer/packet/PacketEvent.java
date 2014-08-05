@@ -18,13 +18,14 @@
 package packeteer.packet;
 
 import lombok.Data;
+import org.bukkit.event.Cancellable;
 
 /**
  *
  * @author Goblom
  */
 @Data
-public class PacketEvent {
+public class PacketEvent implements Cancellable {
     private final Packet packet;
     private final PacketPlayer player;
     private boolean cancelled = false;
