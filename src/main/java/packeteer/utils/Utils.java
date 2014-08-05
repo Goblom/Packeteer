@@ -17,26 +17,11 @@
 
 package packeteer.utils;
 
-import com.google.common.collect.Lists;
-import java.util.Collections;
-import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 /**
  *
  * @author Goblom
  */
 public class Utils {
     
-    public static List<Player> getOnlinePlayers() {
-        List<Player> list = Lists.newArrayList();
-        
-        for (World world : Bukkit.getWorlds()) {
-            list.addAll(world.getPlayers());
-        }
-        
-        return Collections.unmodifiableList(list);
-    }
+    public static void touch(Class<?> clazz) {} //do nothing except call the class
 }

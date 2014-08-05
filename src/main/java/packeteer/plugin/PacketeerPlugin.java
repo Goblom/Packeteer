@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import packeteer.packet.PacketListener;
 import packeteer.packet.Packeteer;
 import packeteer.utils.Reflection;
+import packeteer.utils.Utils;
 
 /**
  *
@@ -47,24 +48,7 @@ public class PacketeerPlugin extends JavaPlugin {
     public void onEnable() {
 //        Packeteer.registerListener(new BasicPacketListener(this));
         
-        getServer().getPluginManager().registerEvents(new Listener() {
-            final Plugin plugin = JavaPlugin.getPlugin(PacketeerPlugin.class);
-            
-            @EventHandler
-            public void onPlayerJoin(final PlayerJoinEvent event) {
-                Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-                    public void run() {
-                        Packeteer.getPlayer(event.getPlayer()).hook();
-                    }
-                }, 5);
-                
-            }
-            
-            @EventHandler
-            public void onPlayerQuit(final PlayerQuitEvent event) {
-                Packeteer.getPlayer(event.getPlayer()).unhook(); 
-            }
-        }, this);
+        getServer().getPluginManager().registerEvents(new PacketeerListener(this), this);
     }
     
     @Override
@@ -78,9 +62,9 @@ public class PacketeerPlugin extends JavaPlugin {
     }
     
     private void startTouching() {
-        touch(Reflection.class);
-        touch(Packeteer.class);
+        Utils.touch(Reflection.class);
+        Utils.touch(Packeteer.class);
     }
     
-    private void touch(Class<?> clazz) {} //do nothing
+     //do nothing
 }

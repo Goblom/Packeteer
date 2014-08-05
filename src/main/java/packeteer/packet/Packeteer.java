@@ -24,8 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import packeteer.plugin.PacketeerListener;
 import packeteer.plugin.PacketeerPlugin;
+import packeteer.utils.Reflection;
+import packeteer.utils.Utils;
 
 /**
  *
@@ -133,5 +138,15 @@ public class Packeteer {
 
     public static void showTimings(boolean show) {
         Packeteer.timings = show;
+    }
+    
+    private static boolean registered = false;
+    public static void register(Plugin plugin) {
+        if (Packeteer.registered) {
+            throw new UnsupportedOperationException("Packeteer is already registered!");
+        }
+        
+        Utils.touch(Reflection.class);
+        Bukkit.getPluginManager().registerEvents(new PacketeerListener(plugin), plugin);
     }
 }
