@@ -27,4 +27,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PacketHandler {
     public PacketHandleType value();
+    public String forClass() default "";
 }
