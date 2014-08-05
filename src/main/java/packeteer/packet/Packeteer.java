@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package packeteer.packet;
 
 import com.google.common.collect.Lists;
@@ -33,62 +32,67 @@ import packeteer.plugin.PacketeerPlugin;
  * @author Goblom
  */
 public class Packeteer {
+
     private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
     private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
     private static boolean timings;
-    
+
     public static PacketPlayer getPlayer(Player player) {
         if (Packeteer.handles.containsKey(player.getUniqueId())) {
             return Packeteer.handles.get(player.getUniqueId());
         }
-        
+
         PacketPlayer packet = new PacketPlayer(player);
         handles.put(player.getUniqueId(), packet);
         return packet;
     }
-    
+
     protected static boolean handleIncoming(PacketPlayer player, Object packet) {
         long start = System.nanoTime();
         Packet p = new Packet(packet);
-        
+
         PacketEvent event = new PacketEvent(p, player);
-         for (PacketMap map : Packeteer.packetMap) {
-             if (map.getHandleType().equals(PacketHandleType.INCOMING)) {
-                 try {
+        for (PacketMap map : Packeteer.packetMap) {
+            if (map.getHandleType().equals(PacketHandleType.INCOMING)) {
+                try {
                     map.getMethod().invoke(map.getListener(), event);
-                 } catch (Exception e) { e.printStackTrace(); }
-             }
-         }
-        
-         if (timings) {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (timings) {
             System.out.println("INCOMING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
-         }
+        }
         return !event.isCancelled();
     }
-    
+
     protected static boolean handleOutgoing(PacketPlayer player, Object packet) {
         long start = System.nanoTime();
         Packet p = new Packet(packet);
-         
-         PacketEvent event = new PacketEvent(p, player);
-         for (PacketMap map : Packeteer.packetMap) {
-             if (map.getHandleType().equals(PacketHandleType.OUTGOING)) {
-                 try {
+
+        PacketEvent event = new PacketEvent(p, player);
+        for (PacketMap map : Packeteer.packetMap) {
+            if (map.getHandleType().equals(PacketHandleType.OUTGOING)) {
+                try {
                     map.getMethod().invoke(map.getListener(), event);
-                 } catch (Exception e) { e.printStackTrace(); }
-             }
-         }
-         
-         if (timings) {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (timings) {
             System.out.println("OUTGOING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
-         }
-         return !event.isCancelled();
+        }
+        return !event.isCancelled();
     }
-    
+
     public static Packet createPacket(String name) throws Exception {
         return new Packet(name, true);
     }
-    
+
     public static void registerListener(PacketListener listener) {
         Class<?> clazz = listener.getClass();
         while (clazz != null) {
@@ -100,33 +104,33 @@ public class Packeteer {
                     packetMap.add(new PacketMap(method, listener, handler.value()));
                 }
             }
-            
+
             clazz = clazz.getSuperclass();
         }
     }
-    
+
     public static void unregisterListener(PacketListener listener) {
         Iterator<PacketMap> it = Packeteer.packetMap.iterator();
         while (it.hasNext()) {
             PacketMap map = it.next();
-            
+
             if (map.getListener().getClass().equals(listener.getClass())) {
                 it.remove();
                 break;
             }
         }
     }
-    
+
     public static PacketListener getInstance(Class<? extends PacketListener> clazz) {
         for (PacketMap map : Packeteer.packetMap) {
             if (map.getListener().getClass().equals(clazz)) {
                 return map.getListener();
             }
         }
-        
+
         return null;
     }
-    
+
     public static void showTimings(boolean show) {
         Packeteer.timings = show;
     }
