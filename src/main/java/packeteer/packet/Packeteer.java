@@ -35,6 +35,7 @@ import packeteer.plugin.PacketeerPlugin;
 public class Packeteer {
     private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
     private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
+    private static boolean timings;
     
     public static PacketPlayer getPlayer(Player player) {
         if (Packeteer.handles.containsKey(player.getUniqueId())) {
@@ -47,6 +48,7 @@ public class Packeteer {
     }
     
     protected static boolean handleIncoming(PacketPlayer player, Object packet) {
+        long start = System.nanoTime();
         Packet p = new Packet(packet);
         
         PacketEvent event = new PacketEvent(p, player);
@@ -58,10 +60,14 @@ public class Packeteer {
              }
          }
         
+         if (timings) {
+            System.out.println("INCOMING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+         }
         return !event.isCancelled();
     }
     
     protected static boolean handleOutgoing(PacketPlayer player, Object packet) {
+        long start = System.nanoTime();
         Packet p = new Packet(packet);
          
          PacketEvent event = new PacketEvent(p, player);
@@ -73,6 +79,9 @@ public class Packeteer {
              }
          }
          
+         if (timings) {
+            System.out.println("OUTGOING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+         }
          return !event.isCancelled();
     }
     
@@ -116,5 +125,9 @@ public class Packeteer {
         }
         
         return null;
+    }
+    
+    public static void showTimings(boolean show) {
+        Packeteer.timings = show;
     }
 }
