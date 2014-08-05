@@ -105,8 +105,8 @@ public class Packeteer {
                 PacketHandler handler = method.getAnnotation(PacketHandler.class);
                 if (handler != null) {
                     method.setAccessible(true);
-                    PacketeerPlugin.getInstance().getLogger().warning("Found " + handler.value() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
-                    packetMap.add(new PacketMap(method, listener, handler.value(), handler.forClass()));
+                    PacketeerPlugin.getInstance().getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
+                    packetMap.add(new PacketMap(method, listener, handler.type(), handler.forClass()));
                 }
             }
 
