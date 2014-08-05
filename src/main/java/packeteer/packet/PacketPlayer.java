@@ -73,7 +73,13 @@ public class PacketPlayer {
     public void unhook() {
         if (!isHooked() || getBukkit() == null) return;
         PacketeerPlugin.getInstance().getLogger().info("UnHooking " + getBukkit().getName());
-        getChannel().eventLoop().submit(new UnHook());
+        getChannel().eventLoop().submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                getChannel().pipeline().remove(CHANNEL_NAME);
+                return null;
+            }
+        });
         setHooked(false);
     }
     
@@ -87,13 +93,5 @@ public class PacketPlayer {
     
     public Object getHandle() {
         return Reflection.getHandle(getBukkit());
-    }
-    
-    private class UnHook implements Callable {
-
-        public Object call() throws Exception {
-            getChannel().pipeline().remove(CHANNEL_NAME);
-            return null;
-        }
     }
 }
