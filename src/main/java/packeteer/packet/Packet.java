@@ -55,7 +55,7 @@ public class Packet {
     
     public void write(String field, Object value) {
         try {
-            Field f = Reflection.getField(provider, field);
+            Field f = Reflection.getField(handle, field);
             f.set(handle, value);
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ public class Packet {
     
     public Object read(String field) {
         try {
-            return Reflection.getField(provider, field).get(handle);
+            return Reflection.getField(handle, field).get(handle);
         } catch (Exception e) {
             e.printStackTrace();
         }
