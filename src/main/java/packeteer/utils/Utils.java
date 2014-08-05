@@ -23,5 +23,13 @@ package packeteer.utils;
  */
 public class Utils {
     
+    public static boolean isNumberical(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (Exception e) {}
+        return false;
+    }
+    
     public static void touch(Class<?> clazz) {} //do nothing except call the class
 }

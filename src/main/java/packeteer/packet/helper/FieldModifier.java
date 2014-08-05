@@ -16,7 +16,9 @@
  */
 package packeteer.packet.helper;
 
+import lombok.Getter;
 import packeteer.packet.Packet;
+import packeteer.utils.Utils;
 
 /**
  *
@@ -25,22 +27,31 @@ import packeteer.packet.Packet;
 public class FieldModifier<T> {
 
     private final Packet packet;
-    private final String field;
-    private final Class<T> type;
+    @Getter private final String fieldName;
+    @Getter private final Class<T> type;
     
     public FieldModifier(Packet packet, String field, Class<T> type) {
         this.packet = packet;
-        this.field = field;
         this.type = type;
+        
+        if (Utils.isNumberical(field)) {
+            try {
+                this.fieldName = packet.getHandle().getClass().getFields()[Integer.valueOf(field)].getName();
+            } catch (Exception e) {
+                throw new RuntimeException("Error loading field at " + field + " for Packet " + packet.getHandle().getClass().getSimpleName());
+            }
+        } else {
+            this.fieldName = field;
+        }
     }
 
     public FieldModifier<T> write(T object) {
-        packet.write(field, object);
+        packet.write(fieldName, object);
         return this;
     }
     
     public T read() {
-        return packet.read(field, type);
+        return packet.read(fieldName, type);
     }
     
     public Packet back() {

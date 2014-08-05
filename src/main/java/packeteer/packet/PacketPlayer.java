@@ -16,7 +16,6 @@
  */
 package packeteer.packet;
 
-import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import lombok.Getter;

@@ -17,7 +17,9 @@
 
 package packeteer.packet;
 
+import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
+import java.util.List;
 import lombok.Getter;
 import packeteer.packet.helper.FieldModifier;
 import packeteer.utils.Reflection;
@@ -100,11 +102,29 @@ public class Packet {
         return (T) read(index);
     }
     
+    public FieldModifier<Object> modify(int field) {
+        return new FieldModifier<Object>(this, String.valueOf(field), Object.class);
+    }
+    
     public FieldModifier<Object> modify(String field) {
         return new FieldModifier<Object>(this, field, Object.class);
     }
     
+    public <T> FieldModifier<T> modify(int field, Class<T> type) {
+        return new FieldModifier<T>(this, String.valueOf(field), type);
+    }
+    
     public <T> FieldModifier<T> modify(String field, Class<T> type) {
         return new FieldModifier<T>(this, field, type);
+    }
+    
+    public <T> List<FieldModifier<T>> modify(Class<T> type) {
+        List<FieldModifier<T>> list = Lists.newArrayList();
+        for (Field field : getHandle().getClass().getFields()) {
+            if (field.getType().equals(type)) {
+                list.add(modify(field.getName(), type));
+            }
+        }
+        return list;
     }
 }
