@@ -24,11 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import packeteer.plugin.PacketeerListener;
-import packeteer.plugin.PacketeerPlugin;
 import packeteer.utils.Reflection;
 import packeteer.utils.Utils;
 
@@ -38,6 +38,7 @@ import packeteer.utils.Utils;
  */
 public class Packeteer {
 
+    @Getter(lombok.AccessLevel.PROTECTED) private static Plugin plugin;
     private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
     private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
     private static boolean timings;
@@ -68,7 +69,7 @@ public class Packeteer {
         }
 
         if (timings) {
-            PacketeerPlugin.getInstance().getLogger().info("INCOMING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            Packeteer.plugin.getLogger().info("INCOMING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
         }
         return !event.isCancelled();
     }
@@ -89,7 +90,7 @@ public class Packeteer {
         }
 
         if (timings) {
-            PacketeerPlugin.getInstance().getLogger().info("OUTGOING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            Packeteer.plugin.getLogger().info("OUTGOING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
         }
         return !event.isCancelled();
     }
@@ -105,7 +106,7 @@ public class Packeteer {
                 PacketHandler handler = method.getAnnotation(PacketHandler.class);
                 if (handler != null) {
                     method.setAccessible(true);
-                    PacketeerPlugin.getInstance().getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
+                    Packeteer.plugin.getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
                     packetMap.add(new PacketMap(method, listener, handler.type(), handler.forClass()));
                 }
             }
@@ -155,6 +156,7 @@ public class Packeteer {
             throw new UnsupportedOperationException("Packeteer is already registered!");
         }
         
+        Packeteer.plugin = plugin;
         Utils.touch(Reflection.class);
         Bukkit.getPluginManager().registerEvents(new PacketeerListener(plugin), plugin);
     }

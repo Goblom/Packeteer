@@ -23,7 +23,6 @@ import lombok.Setter;
 import net.minecraft.util.io.netty.channel.Channel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import packeteer.plugin.PacketeerPlugin;
 import packeteer.utils.Reflection;
 import packeteer.utils.Reflection.ClassType;
 
@@ -64,14 +63,14 @@ public class PacketPlayer {
     
     public void hook() {
         if (isHooked() || getBukkit() == null) return;
-        PacketeerPlugin.getInstance().getLogger().info("Hooking " + getBukkit().getName());
+        Packeteer.getPlugin().getLogger().info("Hooking " + getBukkit().getName());
         getChannel().pipeline().addBefore("packet_handler", CHANNEL_NAME, channelListener);
         setHooked(true);
     }
 
     public void unhook() {
         if (!isHooked() || getBukkit() == null) return;
-        PacketeerPlugin.getInstance().getLogger().info("UnHooking " + getBukkit().getName());
+        Packeteer.getPlugin().getLogger().info("UnHooking " + getBukkit().getName());
         getChannel().eventLoop().submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
