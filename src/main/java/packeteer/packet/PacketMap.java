@@ -29,6 +29,25 @@ import lombok.Getter;
 class PacketMap {
     @Getter private Method method;
     @Getter private PacketListener listener;
-    @Getter private PacketType handleType;
-    @Getter private String forClass;
+    @Getter private PacketType packetType;
+    private String forClass;
+    
+    public String getForClass() {
+        switch (packetType) {
+            case INCOMING:
+                if (forClass.startsWith("PacketPlayIn")) {
+                    return forClass;
+                } else {
+                    return forClass = "PacketPlayIn" + forClass;
+                }
+            case OUTGOING:
+                if (forClass.startsWith("PacketPlayOut")) {
+                    return forClass;
+                } else {
+                    return forClass = "PacketPlayOut" + forClass;
+                }
+        }
+        
+        return forClass;
+    }
 }
