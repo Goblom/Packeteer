@@ -140,6 +140,15 @@ public class Packeteer {
         Packeteer.timings = show;
     }
     
+    public static List<PacketListener> getPacketListeners() {
+        List<PacketListener> list = Lists.newArrayList();
+        for (PacketMap map : Packeteer.packetMap) {
+            list.add(map.getListener());
+        }
+        
+        return list;
+    }
+    
     private static boolean registered = false;
     public static void register(Plugin plugin) {
         if (Packeteer.registered) {

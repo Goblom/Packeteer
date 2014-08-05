@@ -21,7 +21,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import packeteer.packet.PacketListener;
 import packeteer.packet.Packeteer;
 
 /**
@@ -49,5 +51,14 @@ public class PacketeerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
         Packeteer.getPlayer(event.getPlayer()).unhook();
+    }
+    
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+        if (event.getPlugin().equals(plugin)) {
+            for (PacketListener listener : Packeteer.getPacketListeners()) {
+                Packeteer.unregisterListener(listener);
+            }
+        }
     }
 }
