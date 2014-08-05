@@ -29,6 +29,6 @@ import lombok.Getter;
 class PacketMap {
     @Getter private Method method;
     @Getter private PacketListener listener;
-    @Getter private PacketHandleType handleType;
+    @Getter private PacketType handleType;
     @Getter private String forClass;
 }

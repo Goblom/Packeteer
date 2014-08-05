@@ -16,10 +16,11 @@
  */
 package packeteer.plugin;
 
+import org.bukkit.plugin.Plugin;
 import packeteer.packet.PacketEvent;
-import packeteer.packet.PacketHandleType;
 import packeteer.packet.PacketHandler;
 import packeteer.packet.PacketListener;
+import packeteer.packet.PacketType;
 
 /**
  *
@@ -27,18 +28,18 @@ import packeteer.packet.PacketListener;
  */
 class BasicPacketListener implements PacketListener {
 
-    private final PacketeerPlugin plugin;
+    private final Plugin plugin;
     
-    BasicPacketListener(PacketeerPlugin plugin) {
+    BasicPacketListener(Plugin plugin) {
         this.plugin = plugin;
     }
     
-    @PacketHandler(type = PacketHandleType.INCOMING)
+    @PacketHandler(type = PacketType.INCOMING)
     public void onPacketReceive(PacketEvent event) {
         plugin.getLogger().info("Recieved " + event.getPacket().getHandle().getClass().getSimpleName() + " from " + event.getPlayer().getBukkit().getName());
     }
 
-    @PacketHandler(type = PacketHandleType.OUTGOING)
+    @PacketHandler(type = PacketType.OUTGOING)
     public void onPacketSend(PacketEvent event) {
         plugin.getLogger().info("Sent " + event.getPacket().getHandle().getClass().getSimpleName() + " to " + event.getPlayer().getBukkit().getName());
     }

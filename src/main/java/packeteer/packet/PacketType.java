@@ -21,7 +21,7 @@ package packeteer.packet;
  *
  * @author Goblom
  */
-public enum PacketHandleType {
+public enum PacketType {
     INCOMING,
     OUTGOING;
 }
