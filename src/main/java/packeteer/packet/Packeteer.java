@@ -20,6 +20,7 @@ package packeteer.packet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ import packeteer.plugin.PacketeerPlugin;
  * @author Goblom
  */
 public class Packeteer {
-    private static List<PacketMap> packetMap = Lists.newArrayList();
+    private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
     private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
     
     public static PacketPlayer getPlayer(Player player) {
