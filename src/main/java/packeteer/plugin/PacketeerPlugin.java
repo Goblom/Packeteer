@@ -62,11 +62,7 @@ public class PacketeerPlugin extends JavaPlugin {
             
             @EventHandler
             public void onPlayerQuit(final PlayerQuitEvent event) {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    public void run() {
-                        Packeteer.getPlayer(event.getPlayer()).unhook(); 
-                    }
-                });
+                Packeteer.getPlayer(event.getPlayer()).unhook(); 
             }
         }, this);
     }
