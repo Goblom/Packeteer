@@ -63,7 +63,7 @@ public class Packeteer {
         }
 
         if (timings) {
-            System.out.println("INCOMING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            System.out.println("INCOMING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
         }
         return !event.isCancelled();
     }
@@ -84,7 +84,7 @@ public class Packeteer {
         }
 
         if (timings) {
-            System.out.println("OUTGOING " + packet.getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            System.out.println("OUTGOING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
         }
         return !event.isCancelled();
     }
