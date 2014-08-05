@@ -2,3 +2,4 @@ main: packeteer.plugin.PacketeerPlugin
 name: Packeteer
 version: Beta
 author: Goblom
+load: STARTUP
