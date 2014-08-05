@@ -52,7 +52,7 @@ public class Packeteer {
          for (PacketMap map : Packeteer.packetMap) {
              if (map.getHandleType().equals(PacketHandleType.INCOMING)) {
                  try {
-                    map.getMethod().invoke(map.getListener(), PacketEvent.class);
+                    map.getMethod().invoke(map.getListener(), event);
                  } catch (Exception e) { e.printStackTrace(); }
              }
          }
@@ -67,7 +67,7 @@ public class Packeteer {
          for (PacketMap map : Packeteer.packetMap) {
              if (map.getHandleType().equals(PacketHandleType.OUTGOING)) {
                  try {
-                    map.getMethod().invoke(map.getListener(), PacketEvent.class);
+                    map.getMethod().invoke(map.getListener(), event);
                  } catch (Exception e) { e.printStackTrace(); }
              }
          }
