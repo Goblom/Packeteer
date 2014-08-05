@@ -40,7 +40,9 @@ public class Packeteer {
             return Packeteer.handles.get(player.getUniqueId());
         }
         
-        return new PacketPlayer(player);
+        PacketPlayer packet = new PacketPlayer(player);
+        handles.put(player.getUniqueId(), packet);
+        return packet;
     }
     
     protected static boolean handleIncoming(PacketPlayer player, Object packet) {
