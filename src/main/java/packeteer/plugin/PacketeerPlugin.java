@@ -45,7 +45,7 @@ public class PacketeerPlugin extends JavaPlugin {
     
     @Override
     public void onEnable() {
-        Packeteer.registerListener(new BasicPacketListener(this));
+//        Packeteer.registerListener(new BasicPacketListener(this));
         
         getServer().getPluginManager().registerEvents(new Listener() {
             final Plugin plugin = JavaPlugin.getPlugin(PacketeerPlugin.class);
