@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package packeteer.packet.helper;
 
 import lombok.Getter;
@@ -24,33 +25,32 @@ import packeteer.utils.Utils;
  *
  * @author Goblom
  */
-public class FieldModifier<T> {
+public class MethodModifier<T> {
     private final Packet packet;
-    @Getter private final String fieldName;
-    @Getter private final Class<T> type;
+    @Getter private final String methodName;
+    @Getter private final Class<?>[] parameters;
     
-    public FieldModifier(Packet packet, String field, Class<T> type) {
+    public MethodModifier(Packet packet, String method, Class<?>[] params) {
         this.packet = packet;
-        this.type = type;
+        this.parameters = params;
         
-        if (Utils.isNumberical(field)) {
+        if (Utils.isNumberical(method)) {
             try {
-                this.fieldName = packet.getHandle().getClass().getFields()[Integer.valueOf(field)].getName();
+                this.methodName = packet.getHandle().getClass().getMethods()[Integer.valueOf(method)].getName();
             } catch (Exception e) {
-                throw new RuntimeException("Error loading field at " + field + " for Packet " + packet.getHandle().getClass().getSimpleName());
+                throw new RuntimeException("Error loading method at " + method + " for Packet " + packet.getHandle().getClass().getSimpleName());
             }
         } else {
-            this.fieldName = field;
+            this.methodName = method;
         }
     }
-
-    public FieldModifier<T> write(T object) {
-        packet.write(fieldName, object);
-        return this;
+    
+    public T invoke(Object... args) {
+        return (T) packet.invoke(methodName, parameters, args);
     }
     
-    public T read() {
-        return packet.read(fieldName, type);
+    public Object invokeBasic(Object... args) {
+        return packet.invoke(methodName, parameters, args);
     }
     
     public Packet back() {

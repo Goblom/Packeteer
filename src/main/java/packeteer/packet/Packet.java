@@ -19,9 +19,11 @@ package packeteer.packet;
 
 import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import lombok.Getter;
 import packeteer.packet.helper.FieldModifier;
+import packeteer.packet.helper.MethodModifier;
 import packeteer.utils.Reflection;
 
 /**
@@ -54,6 +56,16 @@ public class Packet {
         this.handle = obj;
         
 //        System.out.println("Handle Class: " + handle.getClass());
+    }
+    
+    public Object invoke(String method, Class<?>[] params, Object... args) {
+        try {
+            return Reflection.getMethod(handle, method, params).invoke(handle, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
     
     public void write(String field, Object value) {
@@ -118,13 +130,35 @@ public class Packet {
         return new FieldModifier<T>(this, field, type);
     }
     
-    public <T> List<FieldModifier<T>> modify(Class<T> type) {
+    public <T> List<FieldModifier<T>> collectFields(Class<T> type) {
         List<FieldModifier<T>> list = Lists.newArrayList();
+        
         for (Field field : getHandle().getClass().getFields()) {
             if (field.getType().equals(type)) {
-                list.add(modify(field.getName(), type));
+                list.add(new FieldModifier<T>(this, field.getName(), type));
             }
         }
+        
         return list;
+    }
+    
+    public <T> List<MethodModifier<T>> collectMethods(Class<?> returnType) {
+        List<MethodModifier<T>> list = Lists.newArrayList();
+        
+        for (Method method : getHandle().getClass().getMethods()) {
+            if (method.getReturnType().equals(returnType)) {
+                list.add(new MethodModifier<T>(this, method.getName(), method.getParameterTypes()));
+            }
+        }
+        
+        return list;
+    }
+    
+    public <T> MethodModifier<T> modify(String method, Class<?>... params) {
+        return new MethodModifier<T>(this, method, params);
+    }
+    
+    public <T> MethodModifier<T> modify(int field, Class<?>... params) {
+        return new MethodModifier<T>(this, String.valueOf(field), params);
     }
 }
