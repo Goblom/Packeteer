@@ -59,7 +59,7 @@ public class Packeteer {
 
         PacketEvent event = new PacketEvent(p, player);
         for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()) || map.getForClass().equals("ALL") : true)) {
+            if (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true)) {
                 try {
                     map.getMethod().invoke(map.getListener(), event);
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ public class Packeteer {
 
         PacketEvent event = new PacketEvent(p, player);
         for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()) || map.getForClass().equals("ALL") : true)) {
+            if (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true)) {
                 try {
                     map.getMethod().invoke(map.getListener(), event);
                 } catch (Exception e) {

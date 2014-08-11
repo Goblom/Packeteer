@@ -30,24 +30,24 @@ class PacketMap {
     @Getter private Method method;
     @Getter private PacketListener listener;
     @Getter private PacketType packetType;
-    private String forClass;
+    private String forPacket;
     
-    public String getForClass() {
+    public String getForPacket() {
         switch (packetType) {
             case INCOMING:
-                if (forClass.startsWith("PacketPlayIn")) {
-                    return forClass;
+                if (forPacket.startsWith("PacketPlayIn")) {
+                    return forPacket;
                 } else {
-                    return forClass = "PacketPlayIn" + forClass;
+                    return forPacket = "PacketPlayIn" + forPacket;
                 }
             case OUTGOING:
-                if (forClass.startsWith("PacketPlayOut")) {
-                    return forClass;
+                if (forPacket.startsWith("PacketPlayOut")) {
+                    return forPacket;
                 } else {
-                    return forClass = "PacketPlayOut" + forClass;
+                    return forPacket = "PacketPlayOut" + forPacket;
                 }
         }
         
-        return forClass;
+        return forPacket;
     }
 }
