@@ -25,12 +25,12 @@ import packeteer.utils.Utils;
  *
  * @author Goblom
  */
-public class MethodModifier<T> {
+public class MethodInvoker<T> {
     private final Packet packet;
     @Getter private final String methodName;
     @Getter private final Class<?>[] parameters;
     
-    public MethodModifier(Packet packet, String method, Class<?>[] params) {
+    public MethodInvoker(Packet packet, String method, Class<?>[] params) {
         this.packet = packet;
         this.parameters = params;
         

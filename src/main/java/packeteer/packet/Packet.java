@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import lombok.Getter;
 import packeteer.packet.helper.FieldModifier;
-import packeteer.packet.helper.MethodModifier;
+import packeteer.packet.helper.MethodInvoker;
 import packeteer.utils.Reflection;
 
 /**
@@ -142,23 +142,23 @@ public class Packet {
         return list;
     }
     
-    public <T> List<MethodModifier<T>> collectMethods(Class<?> returnType) {
-        List<MethodModifier<T>> list = Lists.newArrayList();
+    public <T> List<MethodInvoker<T>> collectMethods(Class<?> returnType) {
+        List<MethodInvoker<T>> list = Lists.newArrayList();
         
         for (Method method : getHandle().getClass().getMethods()) {
             if (method.getReturnType().equals(returnType)) {
-                list.add(new MethodModifier<T>(this, method.getName(), method.getParameterTypes()));
+                list.add(new MethodInvoker<T>(this, method.getName(), method.getParameterTypes()));
             }
         }
         
         return list;
     }
     
-    public <T> MethodModifier<T> modify(String method, Class<?>... params) {
-        return new MethodModifier<T>(this, method, params);
+    public <T> MethodInvoker<T> modify(String method, Class<?>... params) {
+        return new MethodInvoker<T>(this, method, params);
     }
     
-    public <T> MethodModifier<T> modify(int field, Class<?>... params) {
-        return new MethodModifier<T>(this, String.valueOf(field), params);
+    public <T> MethodInvoker<T> modify(int field, Class<?>... params) {
+        return new MethodInvoker<T>(this, String.valueOf(field), params);
     }
 }
