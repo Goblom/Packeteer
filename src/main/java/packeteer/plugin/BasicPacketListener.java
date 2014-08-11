@@ -34,12 +34,12 @@ class BasicPacketListener implements PacketListener {
         this.plugin = plugin;
     }
     
-    @PacketHandler(type = PacketType.INCOMING)
+    @PacketHandler(type = PacketType.INCOMING, packet = "ALL")
     public void onPacketReceive(PacketEvent event) {
         plugin.getLogger().info("Recieved " + event.getPacket().getHandle().getClass().getSimpleName() + " from " + event.getPlayer().getBukkit().getName());
     }
 
-    @PacketHandler(type = PacketType.OUTGOING)
+    @PacketHandler(type = PacketType.OUTGOING, packet = "ALL")
     public void onPacketSend(PacketEvent event) {
         plugin.getLogger().info("Sent " + event.getPacket().getHandle().getClass().getSimpleName() + " to " + event.getPlayer().getBukkit().getName());
     }

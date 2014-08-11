@@ -59,7 +59,7 @@ public class Packeteer {
 
         PacketEvent event = new PacketEvent(p, player);
         for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()): true)) {
+            if (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()) || map.getForClass().equals("ALL") : true)) {
                 try {
                     map.getMethod().invoke(map.getListener(), event);
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ public class Packeteer {
 
         PacketEvent event = new PacketEvent(p, player);
         for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()): true)) {
+            if (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForClass().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForClass()) || map.getForClass().equals("ALL") : true)) {
                 try {
                     map.getMethod().invoke(map.getListener(), event);
                 } catch (Exception e) {
@@ -107,7 +107,7 @@ public class Packeteer {
                 if (handler != null) {
                     method.setAccessible(true);
                     Packeteer.plugin.getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
-                    packetMap.add(new PacketMap(method, listener, handler.type(), handler.forClass()));
+                    packetMap.add(new PacketMap(method, listener, handler.type(), handler.packet()));
                 }
             }
 
