@@ -25,12 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import packeteer.plugin.PacketeerListener;
-import packeteer.utils.Reflection;
-import packeteer.utils.Utils;
 
 /**
  *
@@ -157,7 +153,5 @@ public class Packeteer {
         }
         
         Packeteer.plugin = plugin;
-        Utils.touch(Reflection.class);
-        Bukkit.getPluginManager().registerEvents(new PacketeerListener(plugin), plugin);
     }
 }

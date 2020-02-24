@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.util.io.netty.channel.Channel;
+import io.netty.channel.Channel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import packeteer.utils.Reflection;
@@ -52,7 +52,7 @@ public class PacketPlayer {
     PacketPlayer(Player player) {
         Object playerConnection = Reflection.getPlayerConnection(player);
         this.networkManager = Reflection.invokeField(playerConnection, "networkManager");
-        this.channel = (Channel) Reflection.invokeField(networkManager, "m");
+        this.channel = (Channel) Reflection.invokeField(networkManager, "channel");
         this.channelListener = new ChannelListener(this);
         this.UUID = player.getUniqueId();
     }

@@ -24,7 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import packeteer.packet.PacketPlayer;
 
 /**
  *
@@ -56,6 +55,15 @@ public class Reflection {
         return null;
     }
 
+    public static Class<?> forceClass(Class clazz) {
+        String classPath = clazz.getPackage().getName() + "." + clazz.getSimpleName();
+        if (!storedClasses.containsKey(classPath)) {
+            return storedClasses.put(classPath, clazz);
+        }
+        
+        return clazz;
+    }
+    
     public static Class<?> getPacketClass(String name) {
         if (name.startsWith("Packet")) {
             return getClass(ClassType.NMS, name);

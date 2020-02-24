@@ -50,9 +50,22 @@ public class Packet {
             }
         }
     }
+
+    Packet(Class<?> provider, boolean instance) {
+        this.provider = Reflection.forceClass(provider);
+        
+        if (instance) {
+            try {
+                this.handle = provider.newInstance();
+            } catch (Exception e) {
+                System.out.println("Handle is null for " + provider.getSimpleName());
+    //            e.printStackTrace();
+            }
+        }
+    }
     
     Packet(Object obj) {
-        this(obj.getClass().getSimpleName(), false);
+        this(obj.getClass(), false);
         this.handle = obj;
         
 //        System.out.println("Handle Class: " + handle.getClass());

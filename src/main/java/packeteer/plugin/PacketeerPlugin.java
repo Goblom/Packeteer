@@ -20,16 +20,9 @@ package packeteer.plugin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import packeteer.packet.PacketListener;
 import packeteer.packet.Packeteer;
-import packeteer.utils.Reflection;
-import packeteer.utils.Utils;
 
 /**
  *
@@ -46,6 +39,7 @@ public class PacketeerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         Packeteer.register(this);
+        Bukkit.getPluginManager().registerEvents(new PacketeerListener(this), this);
 //        Packeteer.registerListener(new BasicPacketListener(this));
     }
     

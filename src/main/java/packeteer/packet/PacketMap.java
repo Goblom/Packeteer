@@ -33,21 +33,22 @@ class PacketMap {
     private String forPacket;
     
     public String getForPacket() {
-        switch (packetType) {
-            case INCOMING:
-                if (forPacket.startsWith("PacketPlayIn")) {
-                    return forPacket;
-                } else {
-                    return forPacket = "PacketPlayIn" + forPacket;
-                }
-            case OUTGOING:
-                if (forPacket.startsWith("PacketPlayOut")) {
-                    return forPacket;
-                } else {
-                    return forPacket = "PacketPlayOut" + forPacket;
-                }
+        if (!forPacket.equalsIgnoreCase("ALL")) {
+            switch (packetType) {
+                case INCOMING:
+                    if (forPacket.startsWith("PacketPlayIn")) {
+                        return forPacket;
+                    } else {
+                        return forPacket = "PacketPlayIn" + forPacket;
+                    }
+                case OUTGOING:
+                    if (forPacket.startsWith("PacketPlayOut")) {
+                        return forPacket;
+                    } else {
+                        return forPacket = "PacketPlayOut" + forPacket;
+                    }
+            }
         }
-        
         return forPacket;
     }
 }
