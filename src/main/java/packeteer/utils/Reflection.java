@@ -47,7 +47,9 @@ public class Reflection {
         }
 
         try {
-            return storedClasses.put(classPath, Class.forName(classPath));
+            Class found = Class.forName(classPath);
+            storedClasses.put(classPath, found);
+            return found;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,11 +67,11 @@ public class Reflection {
     }
     
     public static Class<?> getPacketClass(String name) {
-        if (name.startsWith("Packet")) {
+        if (name.startsWith("PacketPlay")) {
             return getClass(ClassType.NMS, name);
         }
 
-        return getClass(ClassType.NMS, "Packet" + name);
+        return getClass(ClassType.NMS, "PacketPlay" + name);
     }
 
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) {

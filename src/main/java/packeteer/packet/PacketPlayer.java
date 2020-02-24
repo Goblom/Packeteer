@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.Setter;
 import io.netty.channel.Channel;
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import packeteer.utils.Reflection;
@@ -83,7 +84,7 @@ public class PacketPlayer {
     
     public void sendPacket(Packet packet) {
         try {
-            Reflection.getClass(ClassType.NMS, "PlayerConnection").getMethod("sendPacket", Reflection.getClass(Reflection.ClassType.NMS, "Packet")).invoke(Reflection.getPlayerConnection(getBukkit()), packet);
+            Reflection.getClass(ClassType.NMS, "PlayerConnection").getMethod("sendPacket", Reflection.getClass(Reflection.ClassType.NMS, "Packet")).invoke(Reflection.getPlayerConnection(getBukkit()), packet.getHandle());
         } catch (Exception e) {
             e.printStackTrace();
         }
