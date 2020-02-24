@@ -17,6 +17,7 @@
 package packeteer.packet.helper;
 
 import java.lang.reflect.Field;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import packeteer.utils.Reflection;
 
@@ -24,19 +25,10 @@ import packeteer.utils.Reflection;
  *
  * @author Goblom
  */
+@AllArgsConstructor
 public class SafeField<T> {
     private final Object handle;
     @Getter private final String fieldName;
-    
-    public SafeField(Object handle, String field) {
-        this.handle = handle;
-        this.fieldName = field;
-    }
-    
-    public SafeField(Object handle, int field) {
-        this.handle = handle;
-        this.fieldName = handle.getClass().getFields()[field].getName();
-    }
 
     public boolean exists() {
         return Reflection.getField(handle, fieldName) != null;

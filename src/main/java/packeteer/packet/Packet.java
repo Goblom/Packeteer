@@ -75,16 +75,8 @@ public class Packet {
         return new MethodInvoker<>(handle, name, params);
     }
     
-    public <T> MethodInvoker<T> getMethod(int index, Class<?>... params) {
-        return new MethodInvoker<>(handle, index, params);
-    }
-    
     public <T> SafeField<T> getField(String name) {
         return new SafeField<>(handle, name);
-    }
-    
-    public <T> SafeField<T> getField(int index) {
-        return new SafeField<>(handle, index);
     }
     
     public <T> T read(String field) {

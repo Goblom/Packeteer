@@ -20,6 +20,7 @@ package packeteer.packet.helper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import packeteer.utils.Reflection;
 
@@ -27,21 +28,15 @@ import packeteer.utils.Reflection;
  *
  * @author Goblom
  */
+@AllArgsConstructor
 public class MethodInvoker<T> {
     private final Object handle;
     @Getter private final String methodName;
     @Getter private final Class<?>[] parameters;
     
-    public MethodInvoker(Object handle, String method, Class<?>... params) {
-        this.handle = handle;
-        this.parameters = params;
-        this.methodName = method;
-    }
-    
-    public MethodInvoker(Object handle, int method, Class<?>... params) {
-        this.handle = handle;
-        this.parameters = params;
-        this.methodName = handle.getClass().getMethods()[method].getName();
+    // Allow singe param easily -- for compatibility
+    public MethodInvoker(Object handle, String methodName, Class<?> param) {
+        this(handle, methodName, new Class<?>[] { param });
     }
     
     public <T> T invoke(Object... args) {
