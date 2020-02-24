@@ -49,8 +49,8 @@ public class PacketeerPlugin extends JavaPlugin {
         PacketListener listener = Packeteer.getInstance(BasicPacketListener.class);
         Packeteer.unregisterListener(listener);
         
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        Bukkit.getOnlinePlayers().forEach((player) -> {
             Packeteer.getPlayer(player).unhook();
-        }
+        });
     }
 }
