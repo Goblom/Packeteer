@@ -20,6 +20,7 @@ package packeteer.plugin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import packeteer.packet.PacketListener;
 import packeteer.packet.Packeteer;
@@ -47,5 +48,9 @@ public class PacketeerPlugin extends JavaPlugin {
     public void onDisable() {
         PacketListener listener = Packeteer.getInstance(BasicPacketListener.class);
         Packeteer.unregisterListener(listener);
+        
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Packeteer.getPlayer(player).unhook();
+        }
     }
 }
