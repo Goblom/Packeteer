@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import lombok.Getter;
-import packeteer.packet.helper.FieldModifier;
+import packeteer.packet.helper.SafeField;
 import packeteer.packet.helper.MethodInvoker;
 import packeteer.utils.Reflection;
 
@@ -71,84 +71,37 @@ public class Packet {
 //        System.out.println("Handle Class: " + handle.getClass());
     }
     
-    public Object invoke(String method, Class<?>[] params, Object... args) {
-        try {
-            return Reflection.getMethod(handle, method, params).invoke(handle, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    public <T> MethodInvoker<T> getMethod(String name, Class<?>... params) {
+        return new MethodInvoker<T>(handle, name, params);
     }
     
-    public void write(String field, Object value) {
-        try {
-            Field f = Reflection.getField(handle, field);
-            f.set(handle, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public <T> MethodInvoker<T> getMethod(int index, Class<?>... params) {
+        return new MethodInvoker<T>(handle, index, params);
     }
     
-    public Object read(String field) {
-        try {
-            return Reflection.getField(handle, field).get(handle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    public <T> SafeField<T> getField(String name) {
+        return new SafeField<T>(handle, name);
     }
     
-    public <T> T read(String field, Class<T> type) {
-        return (T) read(field);
+    public <T> SafeField<T> getField(int index) {
+        return new SafeField<T>(handle, index);
     }
     
-    public void write(int index, Object value) {
-        try {
-            Field f = handle.getClass().getFields()[index];
-            f.set(handle, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public <T> T read(String field) {
+        return (T) getField(field).read();
     }
     
-    public Object read(int index) {
-        try {
-            return handle.getClass().getFields()[index].get(handle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    public void write(String name, Object value) {
+        SafeField field = getField(name);
+        field.write(value);
     }
     
-    public <T> T read(int index, Class<T> type) {
-        return (T) read(index);
-    }
-    
-    public FieldModifier<Object> modify(int field) {
-        return new FieldModifier<Object>(this, String.valueOf(field), Object.class);
-    }
-    
-    public FieldModifier<Object> modify(String field) {
-        return new FieldModifier<Object>(this, field, Object.class);
-    }
-    
-    public <T> FieldModifier<T> modify(int field, Class<T> type) {
-        return new FieldModifier<T>(this, String.valueOf(field), type);
-    }
-    
-    public <T> FieldModifier<T> modify(String field, Class<T> type) {
-        return new FieldModifier<T>(this, field, type);
-    }
-    
-    public <T> List<FieldModifier<T>> collectFields(Class<T> type) {
-        List<FieldModifier<T>> list = Lists.newArrayList();
+    public <T> List<SafeField<T>> collectFields(Class<T> type) {
+        List<SafeField<T>> list = Lists.newArrayList();
         
         for (Field field : getHandle().getClass().getFields()) {
             if (field.getType().equals(type)) {
-                list.add(new FieldModifier<T>(this, field.getName(), type));
+                list.add(new SafeField<T>(this, field.getName()));
             }
         }
         
@@ -165,13 +118,5 @@ public class Packet {
         }
         
         return list;
-    }
-    
-    public <T> MethodInvoker<T> modify(String method, Class<?>... params) {
-        return new MethodInvoker<T>(this, method, params);
-    }
-    
-    public <T> MethodInvoker<T> modify(int field, Class<?>... params) {
-        return new MethodInvoker<T>(this, String.valueOf(field), params);
     }
 }

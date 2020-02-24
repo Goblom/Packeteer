@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -34,7 +33,7 @@ import org.bukkit.plugin.Plugin;
  */
 public class Packeteer {
 
-    @Getter(lombok.AccessLevel.PROTECTED) private static Plugin plugin;
+    private static Plugin plugin;
     private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
     private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
     private static boolean timings;
@@ -91,7 +90,7 @@ public class Packeteer {
         return !event.isCancelled();
     }
 
-    public static Packet createPacket(String name) throws Exception {
+    public static Packet createPacket(String name) {
         return new Packet(name, true);
     }
 
@@ -102,7 +101,8 @@ public class Packeteer {
                 PacketHandler handler = method.getAnnotation(PacketHandler.class);
                 if (handler != null) {
                     method.setAccessible(true);
-                    Packeteer.plugin.getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + listener.getClass().getSimpleName());
+//                    String className = (listener.getClass().getSimpleName() == null || listener.getClass().getSimpleName().isEmpty() ? "an inner class" : listener.getClass().getSimpleName());
+//                    Packeteer.plugin.getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + className);
                     packetMap.add(new PacketMap(method, listener, handler.type(), handler.packet()));
                 }
             }
@@ -148,7 +148,7 @@ public class Packeteer {
     
     private static boolean registered = false;
     public static void register(Plugin plugin) {
-        if (Packeteer.registered) {
+        if (Packeteer.registered || Packeteer.plugin != null) {
             throw new UnsupportedOperationException("Packeteer is already registered!");
         }
         

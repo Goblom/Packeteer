@@ -34,11 +34,11 @@ public class PacketeerPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         setInstance(this);
+        Packeteer.register(this);
     }
     
     @Override
     public void onEnable() {
-        Packeteer.register(this);
         Bukkit.getPluginManager().registerEvents(new PacketeerListener(this), this);
 //        Packeteer.registerListener(new BasicPacketListener(this));
     }
@@ -47,9 +47,5 @@ public class PacketeerPlugin extends JavaPlugin {
     public void onDisable() {
         PacketListener listener = Packeteer.getInstance(BasicPacketListener.class);
         Packeteer.unregisterListener(listener);
-    }
-    
-    public ClassLoader getPluginClassLoader() {
-        return getClassLoader();
     }
 }

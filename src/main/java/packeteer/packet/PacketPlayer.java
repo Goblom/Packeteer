@@ -17,13 +17,13 @@
 package packeteer.packet;
 
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.Setter;
 import io.netty.channel.Channel;
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import packeteer.packet.helper.MethodInvoker;
+import packeteer.packet.helper.SafeField;
 import packeteer.utils.Reflection;
 import packeteer.utils.Reflection.ClassType;
 
@@ -33,6 +33,9 @@ import packeteer.utils.Reflection.ClassType;
  */
 public class PacketPlayer {
     private static final String CHANNEL_NAME = "packeteer";
+    
+    @Getter(lombok.AccessLevel.PROTECTED)
+    private final Object playerConnection;
     
     @Getter(lombok.AccessLevel.PROTECTED)
     private final Object networkManager;
@@ -51,9 +54,9 @@ public class PacketPlayer {
     private boolean hooked;
     
     PacketPlayer(Player player) {
-        Object playerConnection = Reflection.getPlayerConnection(player);
-        this.networkManager = Reflection.invokeField(playerConnection, "networkManager");
-        this.channel = (Channel) Reflection.invokeField(networkManager, "channel");
+        this.playerConnection = Reflection.getPlayerConnection(player);
+        this.networkManager = new SafeField(playerConnection, "networkManager").read();
+        this.channel = new SafeField<Channel>(networkManager, "channel").read();
         this.channelListener = new ChannelListener(this);
         this.UUID = player.getUniqueId();
     }
@@ -64,30 +67,29 @@ public class PacketPlayer {
     
     public void hook() {
         if (isHooked() || getBukkit() == null) return;
-        Packeteer.getPlugin().getLogger().info("Hooking " + getBukkit().getName());
         getChannel().pipeline().addBefore("packet_handler", CHANNEL_NAME, channelListener);
         setHooked(true);
     }
 
     public void unhook() {
         if (!isHooked() || getBukkit() == null) return;
-        Packeteer.getPlugin().getLogger().info("UnHooking " + getBukkit().getName());
-        getChannel().eventLoop().submit(new Callable<Object>() {
+        getChannel().eventLoop().submit(new Runnable() {
             @Override
-            public Object call() throws Exception {
+            public void run() {
                 getChannel().pipeline().remove(CHANNEL_NAME);
-                return null;
             }
         });
         setHooked(false);
     }
     
     public void sendPacket(Packet packet) {
-        try {
-            Reflection.getClass(ClassType.NMS, "PlayerConnection").getMethod("sendPacket", Reflection.getClass(Reflection.ClassType.NMS, "Packet")).invoke(Reflection.getPlayerConnection(getBukkit()), packet.getHandle());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new MethodInvoker(playerConnection, "sendPacket", Reflection.getClass(ClassType.NMS, "Packet")).invoke(packet.getHandle());
+        
+//        try {
+//            Reflection.getClass(ClassType.NMS, "PlayerConnection").getMethod("sendPacket", Reflection.getClass(Reflection.ClassType.NMS, "Packet")).invoke(Reflection.getPlayerConnection(getBukkit()), packet.getHandle());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     
     public Object getHandle() {

@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package packeteer.packet.helper;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Field;
 import lombok.Getter;
 import packeteer.utils.Reflection;
 
@@ -26,32 +24,36 @@ import packeteer.utils.Reflection;
  *
  * @author Goblom
  */
-public class MethodInvoker<T> {
+public class SafeField<T> {
     private final Object handle;
-    @Getter private final String methodName;
-    @Getter private final Class<?>[] parameters;
+    @Getter private final String fieldName;
     
-    public MethodInvoker(Object handle, String method, Class<?>... params) {
+    public SafeField(Object handle, String field) {
         this.handle = handle;
-        this.parameters = params;
-        this.methodName = method;
+        this.fieldName = field;
     }
     
-    public MethodInvoker(Object handle, int method, Class<?>... params) {
+    public SafeField(Object handle, int field) {
         this.handle = handle;
-        this.parameters = params;
-        this.methodName = handle.getClass().getMethods()[method].getName();
+        this.fieldName = handle.getClass().getFields()[field].getName();
+    }
+
+    public boolean exists() {
+        return Reflection.getField(handle, fieldName) != null;
     }
     
-    public <T> T invoke(Object... args) {
+    public void write(T object) {
         try {
-            Method m = Reflection.getMethod(handle, methodName, parameters);
-            
-            if (handle == null || Modifier.isStatic(m.getModifiers())) {
-                return (T) m.invoke(null, args);
-            } else {
-                return (T) m.invoke(handle, args);
-            }
+            Field f = Reflection.getField(handle, fieldName);
+            f.set(handle, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public T read() {
+        try {
+            return (T) Reflection.getField(handle, fieldName).get(handle);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -32,13 +32,13 @@ import org.bukkit.entity.Player;
 public class Reflection {
 
     @Getter
-    private static Map<String, Class<?>> storedClasses = Maps.newHashMap();
+    private static final Map<String, Class<?>> storedClasses = Maps.newHashMap();
     @Getter
-    private static Map<Class<?>, Map<String, Method>> storedMethods = Maps.newHashMap();
+    private static final Map<Class<?>, Map<String, Method>> storedMethods = Maps.newHashMap();
     @Getter
-    private static Map<Class<?>, Map<String, Field>> storedFields = Maps.newHashMap();
+    private static final Map<Class<?>, Map<String, Field>> storedFields = Maps.newHashMap();
 
-    private static String VERSION = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 
     public static Class<?> getClass(ClassType type, String name) {
         String classPath = type.getPath() + "." + VERSION + "." + name;
@@ -110,6 +110,10 @@ public class Reflection {
     }
 
     public static Method getMethod(Object object, String name, Class<?>... params) {
+        if (object instanceof Class) {
+            return getMethod((Class) object, name, params);
+        }
+        
         return getMethod(object.getClass(), name, params);
     }
 
@@ -151,18 +155,6 @@ public class Reflection {
     public static Field getField(Object obj, String name) {
         return getField(obj.getClass(), name);
     }
-
-    public static Object invokeField(Object obj,String name) {
-        Field f = getField(obj.getClass(), name);
-        
-        try {
-            return f.get(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        return null;
-    }
     
     @AllArgsConstructor
     public enum ClassType {
@@ -197,25 +189,5 @@ public class Reflection {
         }
 
         return null;
-    }
-    
-    public static void printMethods(Class<?> clazz) {
-        for (Method method : clazz.getMethods()) {
-            System.out.println("Found Method: " + method.getName() + " with type " + method.getReturnType());
-        }
-        
-        for (Method method : clazz.getDeclaredMethods()) {
-            System.out.println("Found Declared Method: " + method.getName() + " with type " + method.getReturnType());
-        }
-    }
-    
-    public static void printFields(Class<?> clazz) {
-        for (Field field : clazz.getFields()) {
-            System.out.println("Found Field: " + field.getName() + " with type " + field.getType());
-        }
-        
-        for (Field field : clazz.getDeclaredFields()) {
-            System.out.println("Found Declared Field: " + field.getName() + " with type " + field.getType());
-        }
     }
 }
