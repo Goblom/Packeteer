@@ -27,9 +27,9 @@ import lombok.Getter;
  */
 @AllArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 class PacketMap {
-    @Getter private Method method;
-    @Getter private PacketListener listener;
-    @Getter private PacketType packetType;
+    @Getter private final Method method;
+    @Getter private final PacketListener listener;
+    @Getter private final PacketType packetType;
     private String forPacket;
     
     public String getForPacket() {

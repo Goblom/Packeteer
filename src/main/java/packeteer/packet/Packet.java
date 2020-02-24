@@ -44,7 +44,7 @@ public class Packet {
         if (instance) {
             try {
                 this.handle = provider.newInstance();
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InstantiationException e) {
                 System.out.println("Handle is null for " + name);
     //            e.printStackTrace();
             }
@@ -57,7 +57,7 @@ public class Packet {
         if (instance) {
             try {
                 this.handle = provider.newInstance();
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InstantiationException e) {
                 System.out.println("Handle is null for " + provider.getSimpleName());
     //            e.printStackTrace();
             }
@@ -72,19 +72,19 @@ public class Packet {
     }
     
     public <T> MethodInvoker<T> getMethod(String name, Class<?>... params) {
-        return new MethodInvoker<T>(handle, name, params);
+        return new MethodInvoker<>(handle, name, params);
     }
     
     public <T> MethodInvoker<T> getMethod(int index, Class<?>... params) {
-        return new MethodInvoker<T>(handle, index, params);
+        return new MethodInvoker<>(handle, index, params);
     }
     
     public <T> SafeField<T> getField(String name) {
-        return new SafeField<T>(handle, name);
+        return new SafeField<>(handle, name);
     }
     
     public <T> SafeField<T> getField(int index) {
-        return new SafeField<T>(handle, index);
+        return new SafeField<>(handle, index);
     }
     
     public <T> T read(String field) {
@@ -101,7 +101,7 @@ public class Packet {
         
         for (Field field : getHandle().getClass().getFields()) {
             if (field.getType().equals(type)) {
-                list.add(new SafeField<T>(this, field.getName()));
+                list.add(new SafeField<>(this, field.getName()));
             }
         }
         
@@ -113,7 +113,7 @@ public class Packet {
         
         for (Method method : getHandle().getClass().getMethods()) {
             if (method.getReturnType().equals(returnType)) {
-                list.add(new MethodInvoker<T>(this, method.getName(), method.getParameterTypes()));
+                list.add(new MethodInvoker<>(this, method.getName(), method.getParameterTypes()));
             }
         }
         

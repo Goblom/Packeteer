@@ -1,5 +1,6 @@
 main: packeteer.plugin.PacketeerPlugin
 name: Packeteer
-version: Beta
+version: 1.0
 author: Goblom
 load: STARTUP
+description: 'A lightweight Packet Library for Spigot/Bukkit'

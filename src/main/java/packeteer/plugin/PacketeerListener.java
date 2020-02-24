@@ -40,11 +40,7 @@ class PacketeerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTask(plugin, new Runnable() {
-            public void run() {
-                Packeteer.getPlayer(event.getPlayer()).hook();
-            }
-        });
+        Bukkit.getScheduler().runTask(plugin, Packeteer.getPlayer(event.getPlayer())::hook);
 
     }
 
@@ -56,9 +52,9 @@ class PacketeerListener implements Listener {
     @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
         if (event.getPlugin().getName().equals(event.getPlugin().getName())) {
-            for (PacketListener listener : Packeteer.getPacketListeners()) {
+            Packeteer.getPacketListeners().forEach((listener) -> {
                 Packeteer.unregisterListener(listener);
-            }
+            });
         }
     }
 }

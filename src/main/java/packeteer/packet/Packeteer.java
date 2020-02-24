@@ -18,12 +18,14 @@ package packeteer.packet;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -34,17 +36,17 @@ import org.bukkit.plugin.Plugin;
 public class Packeteer {
 
     private static Plugin plugin;
-    private static List<PacketMap> packetMap = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
-    private static Map<UUID, PacketPlayer> handles = Maps.newHashMap();
+    private static final List<PacketMap> PACKET_MAP = Collections.synchronizedList(Lists.<PacketMap>newArrayList());
+    private static final Map<UUID, PacketPlayer> PLAYER_HANDLERS = Maps.newHashMap();
     private static boolean timings;
 
     public static PacketPlayer getPlayer(Player player) {
-        if (Packeteer.handles.containsKey(player.getUniqueId())) {
-            return Packeteer.handles.get(player.getUniqueId());
+        if (Packeteer.PLAYER_HANDLERS.containsKey(player.getUniqueId())) {
+            return Packeteer.PLAYER_HANDLERS.get(player.getUniqueId());
         }
 
         PacketPlayer packet = new PacketPlayer(player);
-        handles.put(player.getUniqueId(), packet);
+        PLAYER_HANDLERS.put(player.getUniqueId(), packet);
         return packet;
     }
 
@@ -53,18 +55,16 @@ public class Packeteer {
         Packet p = new Packet(packet);
 
         PacketEvent event = new PacketEvent(p, player);
-        for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true)) {
-                try {
-                    map.getMethod().invoke(map.getListener(), event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Packeteer.PACKET_MAP.stream().filter((map) -> (map.getPacketType().equals(PacketType.INCOMING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true))).forEachOrdered((map) -> {
+            try {
+                map.getMethod().invoke(map.getListener(), event);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
             }
-        }
+        });
 
         if (timings) {
-            Packeteer.plugin.getLogger().info("INCOMING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            Packeteer.plugin.getLogger().log(Level.INFO, "INCOMING {0} took {1} nano seconds.", new Object[] { event.getPacket().getHandle().getClass().getSimpleName(), System.nanoTime() - start });
         }
         return !event.isCancelled();
     }
@@ -74,18 +74,16 @@ public class Packeteer {
         Packet p = new Packet(packet);
 
         PacketEvent event = new PacketEvent(p, player);
-        for (PacketMap map : Packeteer.packetMap) {
-            if (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true)) {
-                try {
-                    map.getMethod().invoke(map.getListener(), event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Packeteer.PACKET_MAP.stream().filter((map) -> (map.getPacketType().equals(PacketType.OUTGOING) && (!map.getForPacket().isEmpty() ? event.getPacket().getHandle().getClass().getSimpleName().equalsIgnoreCase(map.getForPacket()) || map.getForPacket().equals("ALL") : true))).forEachOrdered((map) -> {
+            try {
+                map.getMethod().invoke(map.getListener(), event);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
             }
-        }
+        });
 
         if (timings) {
-            Packeteer.plugin.getLogger().info("OUTGOING " + event.getPacket().getHandle().getClass().getSimpleName() + " took " + (System.nanoTime() - start) + " nano seconds.");
+            Packeteer.plugin.getLogger().log(Level.INFO, "OUTGOING {0} took {1} nano seconds.", new Object[] { event.getPacket().getHandle().getClass().getSimpleName(), System.nanoTime() - start });
         }
         return !event.isCancelled();
     }
@@ -103,7 +101,7 @@ public class Packeteer {
                     method.setAccessible(true);
 //                    String className = (listener.getClass().getSimpleName() == null || listener.getClass().getSimpleName().isEmpty() ? "an inner class" : listener.getClass().getSimpleName());
 //                    Packeteer.plugin.getLogger().warning("Found " + handler.type() + " PacketHandler for " + method.getName() + " in " + className);
-                    packetMap.add(new PacketMap(method, listener, handler.type(), handler.packet()));
+                    PACKET_MAP.add(new PacketMap(method, listener, handler.type(), handler.packet()));
                 }
             }
 
@@ -112,7 +110,7 @@ public class Packeteer {
     }
 
     public static void unregisterListener(PacketListener listener) {
-        Iterator<PacketMap> it = Packeteer.packetMap.iterator();
+        Iterator<PacketMap> it = Packeteer.PACKET_MAP.iterator();
         while (it.hasNext()) {
             PacketMap map = it.next();
 
@@ -124,7 +122,7 @@ public class Packeteer {
     }
 
     public static PacketListener getInstance(Class<? extends PacketListener> clazz) {
-        for (PacketMap map : Packeteer.packetMap) {
+        for (PacketMap map : Packeteer.PACKET_MAP) {
             if (map.getListener().getClass().equals(clazz)) {
                 return map.getListener();
             }
@@ -139,19 +137,19 @@ public class Packeteer {
     
     public static List<PacketListener> getPacketListeners() {
         List<PacketListener> list = Lists.newArrayList();
-        for (PacketMap map : Packeteer.packetMap) {
+        Packeteer.PACKET_MAP.forEach((map) -> {
             list.add(map.getListener());
-        }
+        });
         
         return list;
     }
     
-    private static boolean registered = false;
     public static void register(Plugin plugin) {
-        if (Packeteer.registered || Packeteer.plugin != null) {
+        if (Packeteer.plugin != null) {
             throw new UnsupportedOperationException("Packeteer is already registered!");
         }
         
         Packeteer.plugin = plugin;
+        
     }
 }

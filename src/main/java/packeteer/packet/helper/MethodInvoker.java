@@ -17,6 +17,7 @@
 
 package packeteer.packet.helper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import lombok.Getter;
@@ -52,7 +53,7 @@ public class MethodInvoker<T> {
             } else {
                 return (T) m.invoke(handle, args);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
         

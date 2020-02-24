@@ -73,23 +73,14 @@ public class PacketPlayer {
 
     public void unhook() {
         if (!isHooked() || getBukkit() == null) return;
-        getChannel().eventLoop().submit(new Runnable() {
-            @Override
-            public void run() {
-                getChannel().pipeline().remove(CHANNEL_NAME);
-            }
+        getChannel().eventLoop().submit(() -> {
+            getChannel().pipeline().remove(CHANNEL_NAME);
         });
         setHooked(false);
     }
     
     public void sendPacket(Packet packet) {
         new MethodInvoker(playerConnection, "sendPacket", Reflection.getClass(ClassType.NMS, "Packet")).invoke(packet.getHandle());
-        
-//        try {
-//            Reflection.getClass(ClassType.NMS, "PlayerConnection").getMethod("sendPacket", Reflection.getClass(Reflection.ClassType.NMS, "Packet")).invoke(Reflection.getPlayerConnection(getBukkit()), packet.getHandle());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
     
     public Object getHandle() {

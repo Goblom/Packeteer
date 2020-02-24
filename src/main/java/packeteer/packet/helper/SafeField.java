@@ -46,7 +46,7 @@ public class SafeField<T> {
         try {
             Field f = Reflection.getField(handle, fieldName);
             f.set(handle, object);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
@@ -54,7 +54,7 @@ public class SafeField<T> {
     public T read() {
         try {
             return (T) Reflection.getField(handle, fieldName).get(handle);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             e.printStackTrace();
         }
         
