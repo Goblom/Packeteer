@@ -34,11 +34,11 @@ public class Packet {
     @Getter private Class<?> provider;
     @Getter private Object handle;
     
-    Packet(String name) {
+    public Packet(String name) {
         this(name, true);
     }
     
-    Packet(String name, boolean instance) {
+    public Packet(String name, boolean instance) {
         this.provider = Reflection.getPacketClass(name);
         
         if (instance) {
@@ -51,7 +51,7 @@ public class Packet {
         }
     }
 
-    Packet(Class<?> provider, boolean instance) {
+    public Packet(Class<?> provider, boolean instance) {
         this.provider = Reflection.forceClass(provider);
         
         if (instance) {
@@ -65,10 +65,10 @@ public class Packet {
     }
     
     Packet(Object obj) {
-        this(obj.getClass(), false);
-        this.handle = obj;
+        if (obj instanceof Class) throw new UnsupportedOperationException();
         
-//        System.out.println("Handle Class: " + handle.getClass());
+        this.provider = Reflection.forceClass(obj.getClass());
+        this.handle = obj;
     }
     
     public <T> MethodInvoker<T> getMethod(String name, Class<?>... params) {
