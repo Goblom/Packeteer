@@ -136,12 +136,7 @@ public class Packeteer {
     }
     
     public static List<PacketListener> getPacketListeners() {
-        List<PacketListener> list = Lists.newArrayList();
-        Packeteer.PACKET_MAP.forEach((map) -> {
-            list.add(map.getListener());
-        });
-        
-        return list;
+        return Lists.transform(PACKET_MAP, PacketMap::getListener);
     }
     
     public static void register(Plugin plugin) {

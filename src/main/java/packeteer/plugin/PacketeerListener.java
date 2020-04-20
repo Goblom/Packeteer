@@ -16,6 +16,7 @@
  */
 package packeteer.plugin;
 
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import packeteer.packet.PacketListener;
 import packeteer.packet.Packeteer;
 
@@ -51,10 +53,15 @@ class PacketeerListener implements Listener {
     
     @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
-        if (event.getPlugin().getName().equals(event.getPlugin().getName())) {
-            Packeteer.getPacketListeners().forEach((listener) -> {
-                Packeteer.unregisterListener(listener);
-            });
-        }
+        List<PacketListener> listeners = Packeteer.getPacketListeners();
+        Plugin disabled = event.getPlugin();
+        
+        listeners.stream().filter((l) -> {
+            try {
+                return JavaPlugin.getProvidingPlugin(l.getClass()).equals(disabled);
+            } catch (Exception e) {
+                return false;
+            }
+        }).forEach(Packeteer::unregisterListener);
     }
 }
